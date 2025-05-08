@@ -1,4 +1,7 @@
+![logo](src/main/resources/logos/antrumcraft.png)
+
 # Antrumcraft mod
+
 Made by Piskotka and Viper
 
 A mod for minecraft 1.21.4 that is about exploring and clearing dungeons

@@ -47,3 +47,5 @@ config/
 downloads/
 gradle/
 logs/
+.vim/
+saves/

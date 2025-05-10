@@ -1,0 +1,4 @@
+// 1.21.4	2025-05-10T17:38:29.888003388	Registries
+8e2668c3ff4e449e5438e4e36296c22220867046 data/antrumcraft/forge/biome_modifier/add_tnt_ore.json
+15fabbf635fdd2d2eef8ce0e4e8d9e884d70514d data/antrumcraft/worldgen/configured_feature/tnt_ore.json
+8e4aab7671fe22a04bca889c0f89b6da6c7076b2 data/antrumcraft/worldgen/placed_feature/tnt_ore_placed.json

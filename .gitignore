@@ -45,7 +45,6 @@ local.properties
 
 config/
 downloads/
-gradle/
 logs/
 .vim/
 saves/

@@ -4,6 +4,8 @@ import java.util.OptionalLong;
 
 import org.piskotky.antrumcraft.AntrumMod;
 
+import com.mojang.serialization.MapCodec;
+
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -28,6 +30,7 @@ public class ModDimensions {
 			ResourceLocation.fromNamespaceAndPath(AntrumMod.MODID, "dungeon_dim"));
 	public static final ResourceKey<DimensionType> DUNGEON_DIM_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE, 
 			ResourceLocation.fromNamespaceAndPath(AntrumMod.MODID, "dungeon_dim_type"));
+		
 
 	public static void bootstrapType(BootstrapContext<DimensionType> context){
 		context.register(DUNGEON_DIM_TYPE, new DimensionType(
@@ -62,8 +65,12 @@ public class ModDimensions {
 				new FixedBiomeSource(biomeRegistry.getOrThrow(Biomes.DEEP_DARK)), 
 				noiseGenSettings.getOrThrow(NoiseGeneratorSettings.CAVES));
 
-			LevelStem stem = new LevelStem(dimTypes.getOrThrow(ModDimensions.DUNGEON_DIM_TYPE), wrappedBasedChunkGenerator);
+		TestChunkGenerator customChunkGenerator = new TestChunkGenerator(
+				new FixedBiomeSource(biomeRegistry.getOrThrow(Biomes.THE_VOID))
+				);
+		//LevelStem stem = new LevelStem(dimTypes.getOrThrow(ModDimensions.DUNGEON_DIM_TYPE), wrappedBasedChunkGenerator);
+		LevelStem stem = new LevelStem(dimTypes.getOrThrow(ModDimensions.DUNGEON_DIM_TYPE), customChunkGenerator);
 
-			context.register(ModDimensions.DUNGEON_DIM_KEY, stem);
+		context.register(ModDimensions.DUNGEON_DIM_KEY, stem);
 	}
 }

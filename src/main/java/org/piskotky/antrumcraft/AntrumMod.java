@@ -1,5 +1,6 @@
 package org.piskotky.antrumcraft; 
 
+import org.piskotky.antrumcraft.worldgen.chunkgen.ModChunkGenerators;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -62,6 +63,10 @@ public class AntrumMod
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+		ModChunkGenerators.register(modEventBus);
+
+
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)

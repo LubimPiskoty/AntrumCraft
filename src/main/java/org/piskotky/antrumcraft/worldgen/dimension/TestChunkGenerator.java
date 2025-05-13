@@ -1,0 +1,127 @@
+package org.piskotky.antrumcraft.worldgen.dimension;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.world.level.LevelHeightAccessor;
+import net.minecraft.world.level.NoiseColumn;
+import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.biome.BiomeManager;
+import net.minecraft.world.level.biome.BiomeSource;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.Heightmap.Types;
+import net.minecraft.world.level.levelgen.RandomState;
+import net.minecraft.world.level.levelgen.blending.Blender;
+
+public class TestChunkGenerator extends ChunkGenerator {
+
+	public static final MapCodec<TestChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+			BiomeSource.CODEC.fieldOf("biome_source").forGetter(gen -> gen.biomeSource)
+		).apply(instance, TestChunkGenerator::new));	
+
+	public TestChunkGenerator(BiomeSource biomeSource) {
+		super(biomeSource);
+	}
+
+	@Override
+	protected MapCodec<? extends ChunkGenerator> codec() {
+		return CODEC;
+	}
+
+	@Override
+	public void applyCarvers(WorldGenRegion level, long seed, RandomState random, BiomeManager biomeManager,
+		StructureManager structureManager, ChunkAccess chunk) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void buildSurface(WorldGenRegion level, StructureManager structureManager, RandomState random,
+			ChunkAccess chunk) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void spawnOriginalMobs(WorldGenRegion level) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public int getGenDepth() {
+		return 256;
+	}
+
+	@Override
+	public CompletableFuture<ChunkAccess> fillFromNoise(
+		Blender blender,
+		RandomState randomState,
+		StructureManager structureManager,
+		ChunkAccess chunk
+	) {
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		int radius = 18;
+
+		for (int dx = 0; dx < 16; dx++) {
+			for (int dz = 0; dz < 16; dz++) {
+				for (int dy = 0; dy < chunk.getHeight(); dy++) {
+					int worldX = chunk.getPos().getMinBlockX() + dx;
+					int worldY = dy;
+					int worldZ = chunk.getPos().getMinBlockZ() + dz;
+
+					double distance = Math.sqrt(
+						worldX * worldX +
+						Math.pow(dy-20, 2)  +
+						worldZ * worldZ
+					);
+
+					if (distance <= radius) {
+						pos.set(worldX, worldY, worldZ);
+						chunk.setBlockState(pos, Blocks.STONE.defaultBlockState(), false);
+						chunk.getOrCreateHeightmapUnprimed(Types.WORLD_SURFACE).update(dx, worldY, dz, Blocks.STONE.defaultBlockState());
+					}
+				}
+			}
+		}
+		return CompletableFuture.completedFuture(chunk);
+	}
+
+	@Override
+	public int getSeaLevel() {
+		return 0;
+	}
+
+	@Override
+	public int getMinY() {
+		return 0;
+	}
+
+	@Override
+	public int getBaseHeight(int x, int z, Types type, LevelHeightAccessor level, RandomState random) {
+		return 64;
+	}
+
+	@Override
+	public NoiseColumn getBaseColumn(int x, int z, LevelHeightAccessor height, RandomState random) {
+		return new NoiseColumn(0, new BlockState[0]);
+	}
+
+	@Override
+	public void addDebugScreenInfo(List<String> info, RandomState random, BlockPos pos) {
+		// TODO How do i do this?
+		info.add("TestGen: SphereGen active");
+		info.add("Radius = 30");
+	}
+	
+	@Override
+    public void applyBiomeDecoration(WorldGenLevel level, ChunkAccess chunk, StructureManager structureManager) {
+		// Disable the ore gen etc
+	}
+}

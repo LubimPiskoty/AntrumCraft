@@ -3,11 +3,18 @@ package org.piskotky.antrumcraft.worldgen.dimension;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import org.piskotky.antrumcraft.AntrumMod;
+import org.piskotky.antrumcraft.worldgen.chunkgen.DungeonGenerator;
+
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction8;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.StructureManager;
@@ -26,7 +33,9 @@ public class TestChunkGenerator extends ChunkGenerator {
 
 	public static final MapCodec<TestChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			BiomeSource.CODEC.fieldOf("biome_source").forGetter(gen -> gen.biomeSource)
-		).apply(instance, TestChunkGenerator::new));	
+		).apply(instance, TestChunkGenerator::new));
+
+	public static final ResourceLocation RANDOM_STREAM = ResourceLocation.fromNamespaceAndPath(AntrumMod.MODID, "chunk_random");
 
 	public TestChunkGenerator(BiomeSource biomeSource) {
 		super(biomeSource);
@@ -66,30 +75,10 @@ public class TestChunkGenerator extends ChunkGenerator {
 		StructureManager structureManager,
 		ChunkAccess chunk
 	) {
-		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-		int radius = 18;
 
-		for (int dx = 0; dx < 16; dx++) {
-			for (int dz = 0; dz < 16; dz++) {
-				for (int dy = 0; dy < chunk.getHeight(); dy++) {
-					int worldX = chunk.getPos().getMinBlockX() + dx;
-					int worldY = dy;
-					int worldZ = chunk.getPos().getMinBlockZ() + dz;
+		RandomSource random = randomState.getOrCreateRandomFactory(RANDOM_STREAM).at(chunk.getPos().getWorldPosition());
+		DungeonGenerator.generateHall(chunk, random.nextDouble() <= 0.5 ?  Direction.EAST : Direction.NORTH);
 
-					double distance = Math.sqrt(
-						worldX * worldX +
-						Math.pow(dy-20, 2)  +
-						worldZ * worldZ
-					);
-
-					if (distance <= radius) {
-						pos.set(worldX, worldY, worldZ);
-						chunk.setBlockState(pos, Blocks.STONE.defaultBlockState(), false);
-						chunk.getOrCreateHeightmapUnprimed(Types.WORLD_SURFACE).update(dx, worldY, dz, Blocks.STONE.defaultBlockState());
-					}
-				}
-			}
-		}
 		return CompletableFuture.completedFuture(chunk);
 	}
 
@@ -116,8 +105,6 @@ public class TestChunkGenerator extends ChunkGenerator {
 	@Override
 	public void addDebugScreenInfo(List<String> info, RandomState random, BlockPos pos) {
 		// TODO How do i do this?
-		info.add("TestGen: SphereGen active");
-		info.add("Radius = 30");
 	}
 	
 	@Override

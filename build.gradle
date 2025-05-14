@@ -171,3 +171,11 @@ idea {
         downloadJavadoc = true
     }
 }
+
+tasks.register('debugDungeonGen', JavaExec) {
+    group = 'debug'
+    description = 'Exports a dungeon to JSON for debug'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass.set('org.piskotky.antrumcraft.DebugDungeonGen') // Adjust this to your full class path
+}
+

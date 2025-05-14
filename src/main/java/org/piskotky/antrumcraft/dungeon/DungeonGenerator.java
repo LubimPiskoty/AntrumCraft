@@ -6,16 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.piskotky.antrumcraft.dungeon.Cell.SideType;
-import org.spongepowered.asm.mixin.MixinEnvironment.Side;
 
-import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.phys.Vec2;
 
 public class DungeonGenerator {
 	
 	// List of all floors 
 	public Floor[] floors;
+	public Vec3i[] floorOffsets;
 
 	public int gridSize;
 
@@ -26,6 +25,7 @@ public class DungeonGenerator {
 		this.gridSize = 16; // Make each cell be one chunk big
 
 		floors = new Floor[floorCount];
+		floorOffsets = new Vec3i[floorCount];
 		for(int i = 0; i < floorCount; i++){
 			floors[i] = new Floor(10);
 		}
@@ -45,19 +45,25 @@ public class DungeonGenerator {
 			}
 			generateFloor(roomCount);
 		}
-
+		
+		public Cell getCell(int x, int y) {
+			//TODOO: Possible bug with offsets
+			if (x >= grid.length || x < 0) return null;
+			if (y >= grid.length || y < 0) return null;
+			return grid[x][y];
+		}
 		
 		private void generateFloor(int roomCount){
 			// Generate the start and the end
 			// Make a symbolic path from start to end and then generate rooms along the path which will later get all connected together
 			//
 			// TODO: Make the room and hall generation
-			grid[gridSize/2][0] = Cell.makeStart(SideType.WALL, SideType.WALL, SideType.DOOR, SideType.WALL);
-			grid[gridSize/2][gridSize-1] = Cell.makeEnd(SideType.DOOR, SideType.WALL, SideType.WALL, SideType.WALL);
+			grid[0][0] = Cell.makeStart(SideType.WALL, SideType.WALL, SideType.DOOR, SideType.WALL);
+			grid[0][gridSize-1] = Cell.makeEnd(SideType.DOOR, SideType.WALL, SideType.WALL, SideType.WALL);
 
 			// Manually connect the rooms
 			for (int i = 1; i < gridSize-1; i++) {
-				grid[gridSize/2][i] = Cell.makeHall(SideType.NONE, SideType.WALL, SideType.NONE, SideType.WALL);
+				grid[0][i] = Cell.makeHall(SideType.NONE, SideType.WALL, SideType.NONE, SideType.WALL);
 			}
 
 		}

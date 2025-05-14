@@ -4,14 +4,13 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.piskotky.antrumcraft.AntrumMod;
-import org.piskotky.antrumcraft.worldgen.chunkgen.DungeonGenerator;
+import org.piskotky.antrumcraft.dungeon.DungeonBuilder;
+import org.piskotky.antrumcraft.dungeon.DungeonGenerator;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Direction8;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.RandomSource;
@@ -30,6 +29,9 @@ import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
 
 public class TestChunkGenerator extends ChunkGenerator {
+	
+	private DungeonGenerator generator;
+	private DungeonBuilder builder;
 
 	public static final MapCodec<TestChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			BiomeSource.CODEC.fieldOf("biome_source").forGetter(gen -> gen.biomeSource)
@@ -39,6 +41,9 @@ public class TestChunkGenerator extends ChunkGenerator {
 
 	public TestChunkGenerator(BiomeSource biomeSource) {
 		super(biomeSource);
+
+		this.generator = new DungeonGenerator(4, RandomSource.create(1234));
+		this.builder = new DungeonBuilder(generator);
 	}
 
 	@Override
@@ -56,6 +61,9 @@ public class TestChunkGenerator extends ChunkGenerator {
 	public void buildSurface(WorldGenRegion level, StructureManager structureManager, RandomState random,
 			ChunkAccess chunk) {
 		// TODO Auto-generated method stub
+
+		BlockPos pos = chunk.getPos().getWorldPosition().offset(0, 20, 0);
+		builder.buildDungeon(level, pos);
 	}
 
 	@Override
@@ -68,6 +76,7 @@ public class TestChunkGenerator extends ChunkGenerator {
 		return 256;
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public CompletableFuture<ChunkAccess> fillFromNoise(
 		Blender blender,
@@ -75,10 +84,6 @@ public class TestChunkGenerator extends ChunkGenerator {
 		StructureManager structureManager,
 		ChunkAccess chunk
 	) {
-
-		RandomSource random = randomState.getOrCreateRandomFactory(RANDOM_STREAM).at(chunk.getPos().getWorldPosition());
-		DungeonGenerator.generateHall(chunk, random.nextDouble() <= 0.5 ?  Direction.EAST : Direction.NORTH);
-
 		return CompletableFuture.completedFuture(chunk);
 	}
 

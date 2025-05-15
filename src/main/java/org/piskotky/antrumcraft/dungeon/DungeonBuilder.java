@@ -15,6 +15,8 @@ import org.piskotky.antrumcraft.dungeon.DungeonGenerator.Floor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -36,26 +38,28 @@ public class DungeonBuilder {
 		if (cell == null)
 			return;
 
-		String structName = cell.type == CellType.HALL ? "hall" : "room";
+		String structName = cell.type == CellType.HALL ? "hall_ew" : "room";
 		StructureTemplate struct = loadStructure(region, structName);
+		StructurePlaceSettings settings = new StructurePlaceSettings();
+		
+		//TODO: Add the edge spawning too
 
+		BlockPos size = new BlockPos(struct.getSize());
+		settings
+			.setRotation(Rotation.CLOCKWISE_90)
+			.setRotationPivot(new BlockPos(size.getX() / 2, 0, size.getZ() / 2))
+			.setMirror(Mirror.NONE)
+			.setIgnoreEntities(true);
+	
 		System.out.println("The size of loaded structure is: " + struct.getSize());	
 		boolean result = struct.placeInWorld(
 				region, 
 				pos, 
-				BlockPos.ZERO, 
-				new StructurePlaceSettings(),	
+				new BlockPos(16, 256, 16), 
+				settings,	
 				region.getRandom(), 
 				2);
-		System.out.println("Placing of struct has result of: " + result);
-		//room.placeInWorld(
-		//	region, // ✅ WorldGenRegion allows actual placement
-		//	pos,    // origin of structure placement
-		//	BlockPos.ZERO,
-		//	settings,
-		//	region.getRandom(), // random source for jigsaws, processors, etc.
-		//	Block.UPDATE_ALL // flags: 2 = set blocks without notifying neighbors
-		//);
+		System.out.println("Placing of struct in: [" + pos + "]has result of: " + result);
 	}
 
 	StructureTemplate loadStructure(WorldGenRegion region, String name) {

@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.piskotky.antrumcraft.AntrumMod;
-import org.piskotky.antrumcraft.dungeon.DungeonBuilder;
+import org.piskotky.antrumcraft.dungeon.Cell;
 import org.piskotky.antrumcraft.dungeon.DungeonGenerator;
+import org.piskotky.antrumcraft.dungeon.builders.DungeonBuilder;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -109,7 +110,19 @@ public class TestChunkGenerator extends ChunkGenerator {
 
 	@Override
 	public void addDebugScreenInfo(List<String> info, RandomState random, BlockPos pos) {
-		// TODO How do i do this?
+		int x = pos.getX()/generator.gridSize;
+		int y = pos.getZ()/generator.gridSize;
+		info.add("Cell[x: " + x + ", y: " + y + "]");
+		if (generator.floors.length < 1)
+			return;
+		Cell cell = generator.floors[0].getCell(x, y);
+		if (cell == null)
+			return;
+		info.add("Cell type:  " + cell.type);
+		info.add("North side:" + cell.north);
+		info.add("East side: " + cell.east);
+		info.add("South side:" + cell.south);
+		info.add("West side: " + cell.west);
 	}
 	
 	@Override

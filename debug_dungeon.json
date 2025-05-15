@@ -1,13 +1,13 @@
 {
   "floors": [
     { "grid": [
-      [{"type":"START","sides":["WALL","WALL","DOOR","WALL"]}, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
-      [{"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
-      [{"type":"ROOM","sides":["DOOR","DOOR","WALL","WALL"]}, {"type":"HALL","sides":["WALL","NONE","WALL","NONE"]}, {"type":"END","sides":["WALL","WALL","WALL","DOOR"]}, null, null, null, null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, {"type":"START","sides":["WALL","WALL","DOOR","WALL"]}, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [{"type":"HALL","sides":["WALL","NONE","NONE","WALL"]}, {"type":"HALL","sides":["WALL","NONE","WALL","NONE"]}, {"type":"HALL","sides":["NONE","NONE","NONE","NONE"]}, {"type":"HALL","sides":["WALL","NONE","NONE","NONE"]}, {"type":"ROOM","sides":["WALL","WALL","DOOR","DOOR"]}, null, null, null, null, null, null, null, null, null, null, null],
+      [{"type":"END","sides":["DOOR","WALL","WALL","WALL"]}, null, {"type":"HALL","sides":["NONE","NONE","NONE","WALL"]}, {"type":"HALL","sides":["NONE","NONE","WALL","NONE"]}, {"type":"HALL","sides":["NONE","WALL","NONE","NONE"]}, null, null, null, null, null, null, null, null, null, null, null],
+      [null, {"type":"ROOM","sides":["WALL","NONE","NONE","WALL"]}, {"type":"ROOM","sides":["DOOR","NONE","NONE","NONE"]}, {"type":"ROOM","sides":["WALL","WALL","NONE","WALL"]}, {"type":"HALL","sides":["NONE","NONE","NONE","WALL"]}, {"type":"HALL","sides":["WALL","WALL","NONE","NONE"]}, null, null, null, null, null, null, null, null, null, null],
+      [null, {"type":"ROOM","sides":["NONE","NONE","NONE","WALL"]}, {"type":"ROOM","sides":["NONE","NONE","NONE","NONE"]}, {"type":"ROOM","sides":["NONE","WALL","NONE","WALL"]}, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, {"type":"ROOM","sides":["DOOR","WALL","DOOR","WALL"]}, null, null, null, null, null, null, null, null, null, null],
+      [null, {"type":"ROOM","sides":["NONE","NONE","WALL","WALL"]}, {"type":"ROOM","sides":["WALL","NONE","WALL","NONE"]}, {"type":"ROOM","sides":["NONE","WALL","WALL","NONE"]}, {"type":"HALL","sides":["NONE","NONE","WALL","WALL"]}, {"type":"HALL","sides":["NONE","WALL","WALL","NONE"]}, null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],

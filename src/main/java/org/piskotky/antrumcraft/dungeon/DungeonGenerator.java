@@ -44,7 +44,8 @@ public class DungeonGenerator {
 				for (int j = 0; j < gridSize; j++)
 					grid[i][j] = null;	
 			}
-			generateFloor(roomCount);
+			//generateFloor(roomCount);
+			generateDebugFloor();
 		}
 		
 		public Cell getCell(int x, int y) {
@@ -61,10 +62,51 @@ public class DungeonGenerator {
 			// TODO: Make the room and hall generation
 			grid[0][0] = Cell.makeStart(SideType.WALL, SideType.WALL, SideType.DOOR, SideType.WALL);
 			grid[2][2] = Cell.makeEnd(SideType.WALL,SideType.WALL, SideType.WALL, SideType.DOOR);
-			grid[0][2] = Cell.makeRoom(SideType.DOOR, SideType.DOOR, SideType.WALL, SideType.WALL);
+			grid[0][2] = Cell.makeRoom(SideType.DOOR, SideType.DOOR, SideType.NONE, SideType.WALL);
+			grid[0][3] = Cell.makeRoom(SideType.NONE, SideType.WALL, SideType.NONE, SideType.WALL);
+			grid[0][4] = Cell.makeRoom(SideType.NONE, SideType.DOOR, SideType.WALL, SideType.WALL);
 			// Manually connect the rooms
 			grid[0][1] = Cell.makeHall(SideType.NONE, SideType.WALL, SideType.NONE, SideType.WALL);
 			grid[1][2] = Cell.makeHall(SideType.WALL, SideType.NONE, SideType.WALL, SideType.NONE);
+
+		}
+
+		public void generateDebugFloor(){
+			grid[2][0] = Cell.makeStart(SideType.WALL, SideType.WALL, SideType.DOOR, SideType.WALL);
+			grid[2][1] = Cell.makeHall(SideType.NONE, SideType.WALL, SideType.NONE, SideType.WALL); 
+			grid[2][2] = Cell.makeHall(SideType.NONE, SideType.NONE, SideType.NONE, SideType.NONE);
+
+			// Way to the end
+			grid[1][2] = Cell.makeHall(SideType.WALL, SideType.NONE, SideType.WALL, SideType.NONE); 
+			grid[0][2] = Cell.makeHall(SideType.WALL, SideType.NONE, SideType.NONE, SideType.WALL);
+			grid[0][3] = Cell.makeEnd(SideType.DOOR, SideType.WALL, SideType.WALL, SideType.WALL);
+
+			// Way to Big room
+			grid[2][3] = Cell.makeHall(SideType.NONE, SideType.NONE, SideType.NONE, SideType.WALL);
+			grid[2][4] = Cell.makeRoom(SideType.DOOR, SideType.NONE, SideType.NONE, SideType.NONE);
+			grid[2][5] = Cell.makeRoom(SideType.NONE, SideType.NONE, SideType.NONE, SideType.NONE);
+			grid[2][6] = Cell.makeRoom(SideType.WALL, SideType.NONE, SideType.WALL, SideType.NONE);
+			grid[1][4] = Cell.makeRoom(SideType.WALL, SideType.NONE, SideType.NONE, SideType.WALL);
+			grid[1][5] = Cell.makeRoom(SideType.NONE, SideType.NONE, SideType.NONE, SideType.WALL);
+			grid[1][6] = Cell.makeRoom(SideType.NONE, SideType.NONE, SideType.WALL, SideType.WALL);
+			grid[3][4] = Cell.makeRoom(SideType.WALL, SideType.WALL, SideType.NONE, SideType.WALL);
+			grid[3][5] = Cell.makeRoom(SideType.NONE, SideType.WALL, SideType.NONE, SideType.WALL);
+			grid[3][6] = Cell.makeRoom(SideType.NONE, SideType.WALL, SideType.WALL, SideType.NONE);
+
+			// Way to the corner room
+			grid[3][2] = Cell.makeHall(SideType.WALL, SideType.NONE, SideType.NONE, SideType.NONE);
+			grid[3][3] = Cell.makeHall(SideType.NONE, SideType.NONE, SideType.WALL, SideType.NONE);
+			grid[4][3] = Cell.makeHall(SideType.NONE, SideType.WALL, SideType.NONE, SideType.NONE);
+			grid[4][2] = Cell.makeRoom(SideType.WALL, SideType.WALL, SideType.DOOR, SideType.DOOR);
+
+			// Way to the ?hall room?
+			grid[4][4] = Cell.makeHall(SideType.NONE, SideType.NONE, SideType.NONE, SideType.WALL);
+			grid[4][5] = Cell.makeHall(SideType.NONE, SideType.WALL, SideType.NONE, SideType.WALL);
+			grid[4][6] = Cell.makeHall(SideType.NONE, SideType.NONE, SideType.WALL, SideType.WALL);
+
+			grid[5][4] = Cell.makeHall(SideType.WALL, SideType.WALL, SideType.NONE, SideType.NONE);
+			grid[5][5] = Cell.makeRoom(SideType.DOOR, SideType.WALL, SideType.DOOR, SideType.WALL);
+			grid[5][6] = Cell.makeHall(SideType.NONE, SideType.WALL, SideType.WALL, SideType.NONE);
 
 		}
 

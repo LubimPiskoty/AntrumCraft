@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.piskotky.antrumcraft.dungeon.Cell.SideType;
+import org.spongepowered.asm.mixin.MixinEnvironment.Side;
 
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.RandomSource;
@@ -59,12 +60,11 @@ public class DungeonGenerator {
 			//
 			// TODO: Make the room and hall generation
 			grid[0][0] = Cell.makeStart(SideType.WALL, SideType.WALL, SideType.DOOR, SideType.WALL);
-			grid[0][gridSize-1] = Cell.makeEnd(SideType.DOOR, SideType.WALL, SideType.WALL, SideType.WALL);
-
+			grid[2][2] = Cell.makeEnd(SideType.WALL,SideType.WALL, SideType.WALL, SideType.DOOR);
+			grid[0][2] = Cell.makeRoom(SideType.DOOR, SideType.DOOR, SideType.WALL, SideType.WALL);
 			// Manually connect the rooms
-			for (int i = 1; i < gridSize-1; i++) {
-				grid[0][i] = Cell.makeHall(SideType.NONE, SideType.WALL, SideType.NONE, SideType.WALL);
-			}
+			grid[0][1] = Cell.makeHall(SideType.NONE, SideType.WALL, SideType.NONE, SideType.WALL);
+			grid[1][2] = Cell.makeHall(SideType.WALL, SideType.NONE, SideType.WALL, SideType.NONE);
 
 		}
 

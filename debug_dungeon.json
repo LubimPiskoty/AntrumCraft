@@ -1,22 +1,22 @@
 {
   "floors": [
     { "grid": [
-      [null, null, null, null, null, null, null, null, {"type":"START","sides":["WALL","WALL","DOOR","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, {"type":"END","sides":["DOOR","WALL","WALL","WALL"]}, null, null, null, null, null, null, null]
+      [{"type":"START","sides":["WALL","WALL","DOOR","WALL"]}, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [{"type":"HALL","sides":["NONE","WALL","NONE","WALL"]}, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [{"type":"ROOM","sides":["DOOR","DOOR","WALL","WALL"]}, {"type":"HALL","sides":["WALL","NONE","WALL","NONE"]}, {"type":"END","sides":["WALL","WALL","WALL","DOOR"]}, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]
     ] }
   ]
 }

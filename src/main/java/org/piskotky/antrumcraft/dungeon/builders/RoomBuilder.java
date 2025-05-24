@@ -4,8 +4,7 @@ import org.piskotky.antrumcraft.dungeon.Cell;
 import org.piskotky.antrumcraft.dungeon.Cell.SideType;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.WorldGenRegion;
-import net.minecraft.world.level.block.Mirror;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Rotation;
 
 public class RoomBuilder implements CellBuilder {
@@ -15,7 +14,7 @@ public class RoomBuilder implements CellBuilder {
 	private String ROOM_THREEQUATERS = "room_corner_ne"; 
 
 	@Override
-	public void build(Cell cell, WorldGenRegion region, BlockPos pos) {
+	public void build(Cell cell, ServerLevel level, BlockPos pos) {
 		int wallCount = 0;
 		if (cell.north != SideType.NONE) wallCount++;
 		if (cell.east != SideType.NONE) wallCount++;
@@ -24,15 +23,15 @@ public class RoomBuilder implements CellBuilder {
 		//TODO: Add all variants
 		switch (wallCount) {
 			case 0:
-				buildFull(cell, region, pos);
+				buildFull(cell, level, pos);
 				break;
 
 			case 1: 
-				buildHalf(cell, region, pos);
+				buildHalf(cell, level, pos);
 				break;
 
 			case 2: //TODO: Add this case
-				buildCorner(cell, region, pos);
+				buildCorner(cell, level, pos);
 				break;
 
 			case 3: //TODO: Add this too
@@ -41,32 +40,32 @@ public class RoomBuilder implements CellBuilder {
 			case 4:	//TODO: Add this case
 				break;
 		}
-		buildFull(cell, region, pos);
+		buildFull(cell, level, pos);
 	}
 
-	private void buildFull(Cell cell, WorldGenRegion region, BlockPos pos) {
-		DungeonBuilder.placeStructure(ROOM_FULL, region, pos, Rotation.NONE);
+	private void buildFull(Cell cell, ServerLevel level, BlockPos pos) {
+		DungeonBuilder.placeStructure(ROOM_FULL, level, pos, Rotation.NONE);
 	}
 
 	
-	private void buildHalf(Cell cell, WorldGenRegion region, BlockPos pos) {
+	private void buildHalf(Cell cell, ServerLevel level, BlockPos pos) {
 		Rotation rotation = Rotation.NONE;
 		
 		if (cell.north == SideType.NONE) rotation = Rotation.CLOCKWISE_180;
 		else if (cell.east == SideType.NONE) rotation = Rotation.COUNTERCLOCKWISE_90;
 		else rotation = Rotation.CLOCKWISE_90;
 
-		DungeonBuilder.placeStructure(ROOM_HALF, region, pos, rotation);
+		DungeonBuilder.placeStructure(ROOM_HALF, level, pos, rotation);
 	}
 
 
-	private void buildCorner(Cell cell, WorldGenRegion region, BlockPos pos) {
+	private void buildCorner(Cell cell, ServerLevel level, BlockPos pos) {
 		Rotation rotation = Rotation.NONE;
 
 		if (cell.north == SideType.NONE && cell.west == SideType.NONE) rotation = Rotation.COUNTERCLOCKWISE_90;
 		else if (cell.south == SideType.NONE && cell.west == SideType.NONE) rotation = Rotation.CLOCKWISE_180;
 		else rotation = Rotation.CLOCKWISE_90;
 
-		DungeonBuilder.placeStructure(ROOM_THREEQUATERS, region, pos, rotation);
+		DungeonBuilder.placeStructure(ROOM_THREEQUATERS, level, pos, rotation);
 	}
 }

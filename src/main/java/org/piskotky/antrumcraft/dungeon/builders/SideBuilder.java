@@ -6,7 +6,7 @@ import org.piskotky.antrumcraft.dungeon.Cell;
 import org.piskotky.antrumcraft.dungeon.Cell.SideType;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Rotation;
 
 public class SideBuilder implements CellBuilder {
@@ -14,7 +14,7 @@ public class SideBuilder implements CellBuilder {
 	private static String DOOR = "wall_door_n";
 	
 	@Override
-	public void build(Cell cell, WorldGenRegion region, BlockPos pos) {
+	public void build(Cell cell, ServerLevel level, BlockPos pos) {
 		// build all sides into a list in order:
 		// [north, east, south, west]
 		List<SideType> sides = List.of(cell.north, cell.east, cell.south, cell.west);
@@ -23,11 +23,11 @@ public class SideBuilder implements CellBuilder {
 		for (int i = 0; i < 4; i++) {
 			switch (sides.get(i)) {
 				case SideType.WALL:
-					DungeonBuilder.placeStructure(WALL, region, pos, rotations.get(i));
+					DungeonBuilder.placeStructure(WALL, level, pos, rotations.get(i));
 					break;
 
 				case SideType.DOOR:
-					DungeonBuilder.placeStructure(DOOR, region, pos, rotations.get(i));
+					DungeonBuilder.placeStructure(DOOR, level, pos, rotations.get(i));
 					break;
 
 				case SideType.NONE:

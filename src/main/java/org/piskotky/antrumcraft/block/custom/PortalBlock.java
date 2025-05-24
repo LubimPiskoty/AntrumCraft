@@ -166,9 +166,18 @@ public class PortalBlock extends BaseEntityBlock {
 
 	private PortalBlockEntity generateDungeon(BlockPos pos, ServerLevel dimension) {
 		DungeonGenerator dungeonLayout = new DungeonGenerator(1, RandomSource.create());
-		DungeonBuilder builder = new DungeonBuilder(dungeonLayout);
 
 		ChunkAccess chunk = dimension.getChunk(pos);
+
+		// Each Chunk with portal block will have a block on the start of the chunk
+		chunk.setBlockState(new ChunkPos(pos).getWorldPosition(), Blocks.BEDROCK.defaultBlockState(), false);
+
+		
+		PortalBlockEntity portalBE = DungeonBuilder.build(dungeonLayout, pos, dimension);
+		if (portalBE != null)
+			return portalBE;
+
+		// Then create the spawn manualy somewhere (IT WILL BREAK STUFF BUT IT WILL WORK)
 
 		// Manualy create the portal
 		BlockPos chunkCenter = pos.offset(8, 0, 8);
@@ -179,16 +188,10 @@ public class PortalBlock extends BaseEntityBlock {
 		for (BlockPos foundationPos : BlockPos.betweenClosed(chunkCenter.below().north().east(), chunkCenter.below().south().west())){
 			chunk.setBlockState(foundationPos, concreteBS, false);
 		}
-		//TODO: Implement the dungeon building
-		//builder.buildDungeon(null, null);
 
-		// Each Chunk with portal block will have a block on the start of the chunk
-		chunk.setBlockState(new ChunkPos(pos).getWorldPosition(), Blocks.BEDROCK.defaultBlockState(), false);
+		if (chunk.getBlockEntity(chunkCenter) instanceof PortalBlockEntity fallbackPortalBE)
+			return fallbackPortalBE;
 
-		if (dimension.getBlockEntity(chunkCenter) instanceof PortalBlockEntity portalBE)
-			return portalBE;
-
-		System.out.println("DUNGEON GENERATION DID NOT RETURN PORTAL_BE");
 		return null;
 	}
 }

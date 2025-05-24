@@ -31,9 +31,6 @@ import net.minecraft.world.level.levelgen.blending.Blender;
 
 public class TestChunkGenerator extends ChunkGenerator {
 	
-	private DungeonGenerator generator;
-	private DungeonBuilder builder;
-
 	public static final MapCodec<TestChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			BiomeSource.CODEC.fieldOf("biome_source").forGetter(gen -> gen.biomeSource)
 		).apply(instance, TestChunkGenerator::new));
@@ -42,9 +39,6 @@ public class TestChunkGenerator extends ChunkGenerator {
 
 	public TestChunkGenerator(BiomeSource biomeSource) {
 		super(biomeSource);
-
-		this.generator = new DungeonGenerator(4, RandomSource.create(1234));
-		this.builder = new DungeonBuilder(generator);
 	}
 
 	@Override

@@ -36,7 +36,7 @@ import net.minecraft.world.entity.Relative;
 public class PortalBlock extends BaseEntityBlock {
 	public static final MapCodec<PortalBlock> CODEC = PortalBlock.simpleCodec(PortalBlock::new);
 
-	private static final int DUNGEON_SIZE = 250; // Chunks
+	private static final int DUNGEON_SIZE = 250*16; // Chunks
 
 	public PortalBlock(Properties pProperties) {
 		super(pProperties);

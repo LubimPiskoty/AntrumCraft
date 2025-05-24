@@ -63,8 +63,8 @@ public class TestChunkGenerator extends ChunkGenerator {
 			ChunkAccess chunk) {
 		// TODO Auto-generated method stub
 
-		BlockPos pos = chunk.getPos().getWorldPosition().offset(0, 20, 0);
-		builder.buildDungeon(level, pos);
+		//BlockPos pos = chunk.getPos().getWorldPosition().offset(0, 20, 0);
+		//builder.buildDungeon(level, pos);
 	}
 
 	@Override
@@ -110,19 +110,19 @@ public class TestChunkGenerator extends ChunkGenerator {
 
 	@Override
 	public void addDebugScreenInfo(List<String> info, RandomState random, BlockPos pos) {
-		int x = pos.getX()/generator.gridSize;
-		int y = pos.getZ()/generator.gridSize;
-		info.add("Cell[x: " + x + ", y: " + y + "]");
-		if (generator.floors.length < 1)
-			return;
-		Cell cell = generator.floors[0].getCell(x, y);
-		if (cell == null)
-			return;
-		info.add("Cell type:  " + cell.type);
-		info.add("North side:" + cell.north);
-		info.add("East side: " + cell.east);
-		info.add("South side:" + cell.south);
-		info.add("West side: " + cell.west);
+		//int x = pos.getX()/generator.gridSize;
+		//int y = pos.getZ()/generator.gridSize;
+		//info.add("Cell[x: " + x + ", y: " + y + "]");
+		//if (generator.floors.length < 1)
+		//	return;
+		//Cell cell = generator.floors[0].getCell(x, y);
+		//if (cell == null)
+		//	return;
+		//info.add("Cell type:  " + cell.type);
+		//info.add("North side:" + cell.north);
+		//info.add("East side: " + cell.east);
+		//info.add("South side:" + cell.south);
+		//info.add("West side: " + cell.west);
 	}
 	
 	@Override

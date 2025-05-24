@@ -1,6 +1,7 @@
 package org.piskotky.antrumcraft; 
 
 import org.piskotky.antrumcraft.block.ModBlocks;
+import org.piskotky.antrumcraft.block.entity.ModBlockEntities;
 import org.piskotky.antrumcraft.item.ModItems;
 import org.piskotky.antrumcraft.worldgen.chunkgen.ModChunkGenerators;
 import org.slf4j.Logger;
@@ -12,8 +13,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -51,6 +50,7 @@ public class AntrumMod
 		
 		ModBlocks.register(modEventBus);
 		ModItems.register(modEventBus);
+		ModBlockEntities.register(modEventBus);
 
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);

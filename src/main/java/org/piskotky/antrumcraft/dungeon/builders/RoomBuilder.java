@@ -7,14 +7,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Rotation;
 
-public class RoomBuilder implements CellBuilder {
-	private String ROOM_FULL = "room_center";
-	private String ROOM_HALF = "room_side_s";
-	private String ROOM_QUATER = ""; //TODO: Add
-	private String ROOM_THREEQUATERS = "room_corner_ne"; 
+public class RoomBuilder {
+	private static String ROOM_FULL = "room_center";
+	private static String ROOM_HALF = "room_side_s";
+	private static String ROOM_QUATER = ""; //TODO: Add
+	private static String ROOM_THREEQUATERS = "room_corner_ne"; 
 
-	@Override
-	public void build(Cell cell, ServerLevel level, BlockPos pos) {
+	public static void build(Cell cell, ServerLevel level, BlockPos pos) {
 		int wallCount = 0;
 		if (cell.north != SideType.NONE) wallCount++;
 		if (cell.east != SideType.NONE) wallCount++;
@@ -43,12 +42,12 @@ public class RoomBuilder implements CellBuilder {
 		buildFull(cell, level, pos);
 	}
 
-	private void buildFull(Cell cell, ServerLevel level, BlockPos pos) {
+	private static void buildFull(Cell cell, ServerLevel level, BlockPos pos) {
 		DungeonBuilder.placeStructure(ROOM_FULL, level, pos, Rotation.NONE);
 	}
 
 	
-	private void buildHalf(Cell cell, ServerLevel level, BlockPos pos) {
+	private static void buildHalf(Cell cell, ServerLevel level, BlockPos pos) {
 		Rotation rotation = Rotation.NONE;
 		
 		if (cell.north == SideType.NONE) rotation = Rotation.CLOCKWISE_180;
@@ -59,7 +58,7 @@ public class RoomBuilder implements CellBuilder {
 	}
 
 
-	private void buildCorner(Cell cell, ServerLevel level, BlockPos pos) {
+	private static void buildCorner(Cell cell, ServerLevel level, BlockPos pos) {
 		Rotation rotation = Rotation.NONE;
 
 		if (cell.north == SideType.NONE && cell.west == SideType.NONE) rotation = Rotation.COUNTERCLOCKWISE_90;

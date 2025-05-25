@@ -9,12 +9,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Rotation;
 
-public class SideBuilder implements CellBuilder {
+public class SideBuilder {
 	private static String WALL = "wall_n";
 	private static String DOOR = "wall_door_n";
 	
-	@Override
-	public void build(Cell cell, ServerLevel level, BlockPos pos) {
+	public static void build(Cell cell, ServerLevel level, BlockPos pos) {
 		// build all sides into a list in order:
 		// [north, east, south, west]
 		List<SideType> sides = List.of(cell.north, cell.east, cell.south, cell.west);

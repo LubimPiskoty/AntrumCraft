@@ -5,26 +5,17 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class PortalBlockEntity extends BlockEntity {
 	private UUID portalID;
 	private BlockPos otherPortalPos;
-	//TODO: Implement the portal linking logic
 
 	public PortalBlockEntity(BlockPos pos, BlockState blockState) {
 		super(ModBlockEntities.PORTAL_BE.get(), pos, blockState);
 		portalID = UUID.randomUUID();
 		otherPortalPos = null;
-
-		// Find a way to link the portals
-		// Lets say that there is a predetermied grid of dungeon starts and we will try to loop over all posible positions
-		// until one is free and teleport the player there and also link the portals
 	}
 	
 	@Override
@@ -60,4 +51,5 @@ public class PortalBlockEntity extends BlockEntity {
 
 		System.out.println("Portals have been linked: " + worldPosition + " <-> " + other.getBlockPos());
 	}
+
 }

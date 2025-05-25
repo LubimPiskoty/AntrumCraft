@@ -2,33 +2,37 @@ package org.piskotky.antrumcraft.dungeon;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.piskotky.antrumcraft.dungeon.Cell.SideType;
-import org.spongepowered.asm.mixin.MixinEnvironment.Side;
 
-import net.minecraft.core.Vec3i;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 
 public class DungeonGenerator {
 	
 	// List of all floors 
 	public Floor[] floors;
-	public Vec3i[] floorOffsets;
 
 	public int gridSize;
 
 	public RandomSource random;
 
-	public DungeonGenerator(int floorCount, RandomSource random) {
+
+	public DungeonGenerator(int floorCount, RandomSource random){
+		this(floorCount, random, false);
+	}
+
+	public static DungeonGenerator createDebugDungeon(int floorCount, RandomSource random) {
+		return new DungeonGenerator(floorCount, random, true);
+	}
+
+	private DungeonGenerator(int floorCount, RandomSource random, boolean isDebug) {
 		this.random = random;
-		this.gridSize = 16; // Make each cell be one chunk big
+		this.gridSize = 16; 
 
 		floors = new Floor[floorCount];
-		floorOffsets = new Vec3i[floorCount];
 		for(int i = 0; i < floorCount; i++){
-			floors[i] = new Floor(10);
+			floors[i] = isDebug ? new Floor() : new Floor(10);
 		}
 	}
 
@@ -36,6 +40,16 @@ public class DungeonGenerator {
 	public class Floor {
 		// Floor consist of grid of cells
 		private Cell[][] grid;
+		private BlockPos endRoomPos;
+		private BlockPos startRoomPos;
+
+		public BlockPos getStartRoomPos() {
+			return startRoomPos;
+		}
+
+		public BlockPos getEndRoomPos() {
+			return endRoomPos;
+		}
 
 		public Floor(int roomCount){
 			grid = new Cell[gridSize][gridSize];
@@ -44,10 +58,9 @@ public class DungeonGenerator {
 				for (int j = 0; j < gridSize; j++)
 					grid[i][j] = null;	
 			}
-			//generateFloor(roomCount);
-			generateDebugFloor();
+			generateFloor(roomCount);
 		}
-		
+
 		public Cell getCell(int x, int y) {
 			//TODOO: Possible bug with offsets
 			if (x >= grid.length || x < 0) return null;
@@ -71,8 +84,18 @@ public class DungeonGenerator {
 
 		}
 
-		public void generateDebugFloor(){
+		/* If no arguments are passed a debug floor is generated */
+		public Floor(){
+			gridSize = 8;
+			grid = new Cell[gridSize][gridSize];
+			// Init the grid to empty state
+			for (int i = 0; i < gridSize; i++) {
+				for (int j = 0; j < gridSize; j++)
+					grid[i][j] = null;	
+			}
+
 			grid[2][0] = Cell.makeStart(SideType.WALL, SideType.WALL, SideType.DOOR, SideType.WALL);
+			startRoomPos = new BlockPos(2, 0 ,0);
 			grid[2][1] = Cell.makeHall(SideType.NONE, SideType.WALL, SideType.NONE, SideType.WALL); 
 			grid[2][2] = Cell.makeHall(SideType.NONE, SideType.NONE, SideType.NONE, SideType.NONE);
 
@@ -80,6 +103,7 @@ public class DungeonGenerator {
 			grid[1][2] = Cell.makeHall(SideType.WALL, SideType.NONE, SideType.WALL, SideType.NONE); 
 			grid[0][2] = Cell.makeHall(SideType.WALL, SideType.NONE, SideType.NONE, SideType.WALL);
 			grid[0][3] = Cell.makeEnd(SideType.DOOR, SideType.WALL, SideType.WALL, SideType.WALL);
+			endRoomPos = new BlockPos(0, 0, 3);
 
 			// Way to Big room
 			grid[2][3] = Cell.makeHall(SideType.NONE, SideType.NONE, SideType.NONE, SideType.WALL);

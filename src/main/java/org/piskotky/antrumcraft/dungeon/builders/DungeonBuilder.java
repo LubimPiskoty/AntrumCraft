@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
@@ -20,44 +20,50 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
 public class DungeonBuilder {
+	public static final int FLOOR_HEIGHT = 16;
+	public static void build(DungeonGenerator generator, BlockPos startPos, ServerLevel level, PortalBlockEntity portalBE) {
 
-	public static PortalBlockEntity build(DungeonGenerator generator, BlockPos startPos, ServerLevel level) {
-		System.out.println("STARTING DUNGEON BUILDER");
-		//TODO: Build all floors
-		Floor floor = generator.floors[0];
+		System.out.println("The start room pos is: [" + generator.floors[0].getStartRoomPos().multiply(16) + "]");	
+		BlockPos spawnPos = new ChunkPos(startPos.offset(generator.floors[0].getStartRoomPos().multiply(16))).getMiddleBlockPosition(startPos.getY()+1);
+		portalBE.setDestination(spawnPos);
 
-		// Build floor
-		for (int i = 0; i < generator.gridSize * generator.gridSize; i++){
-			int x = i / generator.gridSize;
-			int y = i % generator.gridSize;
+
+		BlockPos floorOffset = startPos.offset(generator.floors[0].getStartRoomPos().multiply(-16));
+		for (Floor floor : generator.floors){
+			buildFloor(floor, generator.gridSize, floorOffset, level, portalBE);
+			floorOffset = floorOffset.offset(floor.getEndRoomPos().subtract(floor.getStartRoomPos()).multiply(16)).below(FLOOR_HEIGHT);
+		}
+	}
+
+	private static void buildFloor(Floor floor, int gridSize, BlockPos startPos, ServerLevel level, PortalBlockEntity portalBE) {
+		for (int i = 0; i < gridSize * gridSize; i++){
+			int x = i / gridSize;
+			int y = i % gridSize;
 
 			Cell cell = floor.getCell(x, y);
 			if (cell == null)
 				continue;
 
-
-			BlockPos pos = startPos.offset(x*16, 0, y*16);
-			System.out.println("Building floor: " + i + " at: [" + pos + "]");
+			BlockPos pos = startPos.offset(floor.getStartRoomPos().multiply(16)).offset(x*16, 0, y*16);
 			// Generate the cells
 			switch (cell.type) {
-				case CellType.ROOM:
 				case CellType.START:
 				case CellType.END:
-					new RoomBuilder().build(cell, level, pos);
-					new SideBuilder().build(cell, level, pos);
+					//TODO: Handle the staircase
+				case CellType.ROOM:
+					RoomBuilder.build(cell, level, pos);
+					SideBuilder.build(cell, level, pos);
 					break;
 
 				case CellType.HALL:
-					new HallBuilder().build(cell, level, pos);
+					HallBuilder.build(cell, level, pos);
 					break;
 
 				default:
 					continue;	
 			}
+	
 		}
-
-		//TODO: return the starting room portal block or at least start position
-		return null;
 	}
 
 	public static StructureTemplate loadStructure(ServerLevel level, String name) {
@@ -101,7 +107,7 @@ public class DungeonBuilder {
 				break;
 		}
 
-		System.out.println("The size of loaded structure is: " + structure.getSize());
+		// System.out.println("The size of loaded structure is: " + structure.getSize());
 
 		boolean result = structure.placeInWorld(
 				level, 
@@ -110,6 +116,6 @@ public class DungeonBuilder {
 				settings,	
 				level.getRandom(), 
 				2);
-		System.out.println("Placing of struct in: [" + pos + "]has result of: " + result);
+		System.out.println("Placing struct: [" + pos + "]");
 	}
 }

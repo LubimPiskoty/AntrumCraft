@@ -7,14 +7,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Rotation;
 
-public class HallBuilder implements CellBuilder {
+public class HallBuilder {
 	private static String HALL_STRAIGHT = "hall_ns";
 	private static String HALL_4WAY = "hall_4way";
 	private static String HALL_3WAY = "hall_3way_nse";
 	private static String HALL_CORNER = "hall_corner_ne";
 
-	@Override
-	public void build(Cell cell, ServerLevel level, BlockPos pos) {
+	public static void build(Cell cell, ServerLevel level, BlockPos pos) {
 		// Count the number of walls
 		int wallCount = 0;
 		if (cell.north != SideType.NONE) wallCount++;
@@ -39,14 +38,14 @@ public class HallBuilder implements CellBuilder {
 		}
 	}
 
-	private void buildStraight(Cell cell, ServerLevel level, BlockPos pos) {
+	private static void buildStraight(Cell cell, ServerLevel level, BlockPos pos) {
 		Rotation rotation = cell.north != SideType.NONE ? // It is a ew type needs to be flipped
 							Rotation.CLOCKWISE_90 : Rotation.NONE;
 
 		DungeonBuilder.placeStructure(HALL_STRAIGHT, level, pos, rotation);
 	}
 
-	private void buildCorner(Cell cell, ServerLevel level, BlockPos pos) {
+	private static void buildCorner(Cell cell, ServerLevel level, BlockPos pos) {
 		Rotation rotation;
 		//WARNING: Current hall_corner_ne is not NE but SW so if it is changed also change this
 		if (cell.north == SideType.NONE) { // There is path on top
@@ -63,7 +62,7 @@ public class HallBuilder implements CellBuilder {
 		DungeonBuilder.placeStructure(HALL_CORNER, level, pos, rotation);
 	}
 
-	private void build3Way(Cell cell, ServerLevel level, BlockPos pos) {
+	private static void build3Way(Cell cell, ServerLevel level, BlockPos pos) {
 		Rotation rotation;
 
 		if (cell.north != SideType.NONE) rotation = Rotation.CLOCKWISE_90; 	
@@ -74,7 +73,7 @@ public class HallBuilder implements CellBuilder {
 		DungeonBuilder.placeStructure(HALL_3WAY, level, pos, rotation);
 	}
 
-	private void build4Way(Cell cell, ServerLevel level, BlockPos pos) {
+	private static void build4Way(Cell cell, ServerLevel level, BlockPos pos) {
 		DungeonBuilder.placeStructure(HALL_4WAY, level, pos, Rotation.NONE);
 	}
 

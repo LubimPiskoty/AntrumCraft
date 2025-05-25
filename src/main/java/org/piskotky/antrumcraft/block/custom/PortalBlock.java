@@ -9,17 +9,11 @@ import org.piskotky.antrumcraft.dungeon.DungeonGenerator;
 import org.piskotky.antrumcraft.dungeon.builders.DungeonBuilder;
 import org.piskotky.antrumcraft.worldgen.dimension.ModDimensions;
 
-import com.google.common.collect.ForwardingMap;
 import com.mojang.serialization.MapCodec;
 
-import net.minecraft.client.multiplayer.chat.report.ReportEnvironment.Server;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.data.worldgen.DimensionTypes;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
@@ -97,20 +91,23 @@ public class PortalBlock extends BaseEntityBlock {
 		// If it is not set that means that the portal has not been linked yet
 		if (destinationPos == null){
 			// Hard code 1k dungeons but it can be much higher tbh
-			for (int i = 0; i < 1000000; i++){
+			int i = 0;
+			while (true){
 				System.out.println("TRYING CANDIDATE POS: " + i);
-				BlockPos candidatePos = getAvailablePortalPosition(i);
+				BlockPos candidatePos = getAvailablePortalPosition(i, dungeonDim.getMaxY()-32);
 				
-				if (Math.abs(candidatePos.getX()) >= 30000000 || Math.abs(candidatePos.getZ()) >= 30000000)
+				
+				if (Math.abs(candidatePos.getX()) >= MinecraftServer.ABSOLUTE_MAX_WORLD_SIZE ||
+						Math.abs(candidatePos.getZ()) >= MinecraftServer.ABSOLUTE_MAX_WORLD_SIZE)
 					break;	// Handle out of bounds position as a full one
 
 				if (!isPortalPresent(server, candidatePos, dungeonDim)){
 					System.out.println("FOUND A EMPTY CANDIDATE POS: " + candidatePos);
-					PortalBlockEntity generatedPortal = generateDungeon(candidatePos, dungeonDim);
-					portalBE.linkPortals(generatedPortal);
-					destinationPos = generatedPortal.getBlockPos();
+					generateDungeon(candidatePos, dungeonDim, portalBE);
+					destinationPos = portalBE.getDestination();
 					break;
 				}
+				i++;
 			}
 			// If not found then handle clearing oldest dimension (will need to save the last time used in the blockentity)
 			if (destinationPos == null){
@@ -134,20 +131,20 @@ public class PortalBlock extends BaseEntityBlock {
 		}
 	}
 
-	private BlockPos getAvailablePortalPosition(int index) {
+	private static BlockPos getAvailablePortalPosition(int index, int height) {
 		// Use some kind of hilberts curve to index the whole dimension
 		int[] coords = unpairZ2(index);
-		return new BlockPos(coords[0] * DUNGEON_SIZE, 20, coords[1] * DUNGEON_SIZE);
+		return new BlockPos(coords[0] * DUNGEON_SIZE, height, coords[1] * DUNGEON_SIZE);
 	}
 
 
 	/*  The mapping into integer lattice*/
 
-	int toZ(int n){
+	static int toZ(int n){
 		return n % 2 == 0 ? n / 2 : -(n / 2 + 1);
 	}
 
-	int[] unpairZ2(int n) {
+	static int[] unpairZ2(int n) {
 		int w = (int)(Math.sqrt(8 * n + 1) - 1) / 2;
 		int t = w * (w + 1) / 2;
 		int x_n = w - (n - t);
@@ -164,34 +161,30 @@ public class PortalBlock extends BaseEntityBlock {
 	}
 
 
-	private PortalBlockEntity generateDungeon(BlockPos pos, ServerLevel dimension) {
-		DungeonGenerator dungeonLayout = new DungeonGenerator(1, RandomSource.create());
+	private void generateDungeon(BlockPos pos, ServerLevel level, PortalBlockEntity portalBE) {
+		DungeonGenerator dungeonLayout;
 
-		ChunkAccess chunk = dimension.getChunk(pos);
+		//dungeonLayout = new DungeonGenerator(2, RandomSource.create());
+		dungeonLayout = DungeonGenerator.createDebugDungeon(6, level.getRandom());
+		
+		ChunkAccess chunk = level.getChunk(pos);
 
 		// Each Chunk with portal block will have a block on the start of the chunk
 		chunk.setBlockState(new ChunkPos(pos).getWorldPosition(), Blocks.BEDROCK.defaultBlockState(), false);
-
 		
-		PortalBlockEntity portalBE = DungeonBuilder.build(dungeonLayout, pos, dimension);
-		if (portalBE != null)
-			return portalBE;
-
-		// Then create the spawn manualy somewhere (IT WILL BREAK STUFF BUT IT WILL WORK)
+		DungeonBuilder.build(dungeonLayout, pos, level, portalBE);
 
 		// Manualy create the portal
-		BlockPos chunkCenter = pos.offset(8, 0, 8);
+		BlockPos chunkCenter = pos.offset(8, 16, 8);
 		chunk.setBlockState(chunkCenter, ModBlocks.DUNGEON_PORTAL_BLOCK.get().defaultBlockState(), false);
 
-		// Builda platform under the portal block TEMPORARY SOLUTION
+		// Build platform under the portal block TEMPORARY SOLUTION
 		BlockState concreteBS = Blocks.BLACK_CONCRETE.defaultBlockState();
-		for (BlockPos foundationPos : BlockPos.betweenClosed(chunkCenter.below().north().east(), chunkCenter.below().south().west())){
+		for (BlockPos foundationPos : 
+				BlockPos.betweenClosed(chunkCenter.below().north().east(), chunkCenter.below().south().west())){
 			chunk.setBlockState(foundationPos, concreteBS, false);
 		}
 
-		if (chunk.getBlockEntity(chunkCenter) instanceof PortalBlockEntity fallbackPortalBE)
-			return fallbackPortalBE;
-
-		return null;
+		((PortalBlockEntity)level.getBlockEntity(chunkCenter)).setDestination(portalBE.getBlockPos().north());
 	}
 }

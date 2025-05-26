@@ -103,9 +103,8 @@ public class PortalBlock extends BaseEntityBlock {
 
 				if (!isPortalPresent(server, candidatePos, dungeonDim)){
 					System.out.println("FOUND A EMPTY CANDIDATE POS: " + candidatePos);
-					generateDungeon(candidatePos, dungeonDim, portalBE);
-					destinationPos = portalBE.getDestination();
-					break;
+					generateDungeon(candidatePos, dungeonDim, portalBE, player);
+					return;
 				}
 				i++;
 			}
@@ -120,7 +119,7 @@ public class PortalBlock extends BaseEntityBlock {
 	}
 
 
-	private void teleportTo(Player player, BlockPos pos, ServerLevel dimension) {
+	public static void teleportTo(Player player, BlockPos pos, ServerLevel dimension) {
 		int posX, posY, posZ;
 		posX = pos.getX();
 		posY = pos.getY();
@@ -161,7 +160,7 @@ public class PortalBlock extends BaseEntityBlock {
 	}
 
 
-	private void generateDungeon(BlockPos pos, ServerLevel level, PortalBlockEntity portalBE) {
+	private void generateDungeon(BlockPos pos, ServerLevel level, PortalBlockEntity portalBE, Player playerRef) {
 		DungeonGenerator dungeonLayout;
 
 		//dungeonLayout = new DungeonGenerator(2, RandomSource.create());
@@ -172,7 +171,12 @@ public class PortalBlock extends BaseEntityBlock {
 		// Each Chunk with portal block will have a block on the start of the chunk
 		chunk.setBlockState(new ChunkPos(pos).getWorldPosition(), Blocks.BEDROCK.defaultBlockState(), false);
 		
-		DungeonBuilder.build(dungeonLayout, pos, level, portalBE);
+		
+		System.out.println("The start room pos is: [" + dungeonLayout.getSpawnPos() + "]");	
+		BlockPos spawnPos = new ChunkPos(pos.offset(dungeonLayout.getSpawnPos())).getMiddleBlockPosition(pos.getY()+1);
+		portalBE.setDestination(spawnPos);
+
+		DungeonBuilder.build(dungeonLayout, pos, level, portalBE, playerRef);
 
 		// Manualy create the portal
 		BlockPos chunkCenter = pos.offset(8, 16, 8);

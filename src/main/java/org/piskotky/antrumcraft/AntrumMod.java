@@ -2,6 +2,7 @@ package org.piskotky.antrumcraft;
 
 import org.piskotky.antrumcraft.block.ModBlocks;
 import org.piskotky.antrumcraft.block.entity.ModBlockEntities;
+import org.piskotky.antrumcraft.dungeon.builders.DungeonBuilder;
 import org.piskotky.antrumcraft.item.ModItems;
 import org.piskotky.antrumcraft.worldgen.chunkgen.ModChunkGenerators;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -26,6 +28,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -63,13 +66,16 @@ public class AntrumMod
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
 
+
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
 		ModChunkGenerators.register(modEventBus);
 
-
-    }
+		//modEventBus.addListener(EventPriority.LOWEST, true, ServerTickEvent.Post.class, event -> {
+		//	DungeonBuilder.AsyncScheduler.onServerTick();
+		//});
+	}
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
@@ -100,6 +106,12 @@ public class AntrumMod
         LOGGER.info("HELLO from server starting");
 
     }
+
+	@SubscribeEvent
+	private void onServerLateTick(ServerTickEvent.Post event){
+		if (event.hasTime())
+			DungeonBuilder.AsyncScheduler.onServerTick();
+	}
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

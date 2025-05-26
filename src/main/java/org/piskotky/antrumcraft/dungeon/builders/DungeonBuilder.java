@@ -1,7 +1,11 @@
 package org.piskotky.antrumcraft.dungeon.builders;
 
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 import org.piskotky.antrumcraft.AntrumMod;
+import org.piskotky.antrumcraft.block.custom.PortalBlock;
 import org.piskotky.antrumcraft.block.entity.PortalBlockEntity;
 import org.piskotky.antrumcraft.dungeon.Cell;
 import org.piskotky.antrumcraft.dungeon.Cell.CellType;
@@ -12,7 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
@@ -20,22 +24,25 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
 public class DungeonBuilder {
-	public static final int FLOOR_HEIGHT = 16;
-	public static void build(DungeonGenerator generator, BlockPos startPos, ServerLevel level, PortalBlockEntity portalBE) {
-
-		System.out.println("The start room pos is: [" + generator.floors[0].getStartRoomPos().multiply(16) + "]");	
-		BlockPos spawnPos = new ChunkPos(startPos.offset(generator.floors[0].getStartRoomPos().multiply(16))).getMiddleBlockPosition(startPos.getY()+1);
-		portalBE.setDestination(spawnPos);
-
+	public static final int FLOOR_HEIGHT = 16; // Dont touch this because floor connection structure wont connect
+	public static void build(DungeonGenerator generator, BlockPos startPos, ServerLevel level, PortalBlockEntity portalBE, Player playerRef) {
 
 		BlockPos floorOffset = startPos.offset(generator.floors[0].getStartRoomPos().multiply(-16));
+		int i = 0;
 		for (Floor floor : generator.floors){
-			buildFloor(floor, generator.gridSize, floorOffset, level, portalBE);
-			floorOffset = floorOffset.offset(floor.getEndRoomPos().subtract(floor.getStartRoomPos()).multiply(16)).below(FLOOR_HEIGHT);
+			final boolean isFirstFloor = i++ == 0;
+			final BlockPos finalOffset = floorOffset.immutable();
+			AsyncScheduler.queue(() -> {
+				buildFloor(floor, generator.gridSize, finalOffset, level, portalBE, isFirstFloor);
+				if (playerRef != null && isFirstFloor) PortalBlock.teleportTo(playerRef, portalBE.getDestination() ,level);
+			});	
+
+			floorOffset = floorOffset.offset(floor.getEndRoomPos().subtract(floor.getStartRoomPos())
+					.multiply(16)).below(FLOOR_HEIGHT);
 		}
 	}
 
-	private static void buildFloor(Floor floor, int gridSize, BlockPos startPos, ServerLevel level, PortalBlockEntity portalBE) {
+	private static void buildFloor(Floor floor, int gridSize, BlockPos startPos, ServerLevel level, PortalBlockEntity portalBE, boolean isFirstFloor) {
 		for (int i = 0; i < gridSize * gridSize; i++){
 			int x = i / gridSize;
 			int y = i % gridSize;
@@ -48,8 +55,12 @@ public class DungeonBuilder {
 			// Generate the cells
 			switch (cell.type) {
 				case CellType.START:
+					if (!isFirstFloor){
+						StaircaseBuilder.build(cell, level, pos);
+						break;
+					}
+
 				case CellType.END:
-					//TODO: Handle the staircase
 				case CellType.ROOM:
 					RoomBuilder.build(cell, level, pos);
 					SideBuilder.build(cell, level, pos);
@@ -116,6 +127,22 @@ public class DungeonBuilder {
 				settings,	
 				level.getRandom(), 
 				2);
-		System.out.println("Placing struct: [" + pos + "]");
+		//System.out.println("Placing struct: [" + pos + "]");
+	}
+
+	public class AsyncScheduler {
+
+		private static final Queue<Runnable> queuedTasks = new ArrayDeque<>();
+
+		public static void queue(Runnable task) {
+			queuedTasks.add(task);
+		}
+
+		public static void onServerTick() {
+			if (!queuedTasks.isEmpty()) {
+				Runnable task = queuedTasks.poll();
+				if (task != null) task.run(); // Run one per tick
+			}
+		}
 	}
 }

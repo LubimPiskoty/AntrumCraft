@@ -8,10 +8,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Rotation;
 
 public class RoomBuilder {
-	private static String ROOM_FULL = "room_center";
-	private static String ROOM_HALF = "room_side_s";
-	private static String ROOM_QUATER = ""; //TODO: Add
-	private static String ROOM_THREEQUATERS = "room_corner_ne"; 
+	private static final String ROOM_FULL = "room_center";
+	private static final String ROOM_HALF = "room_side_s";
+	private static final String ROOM_QUATER = ""; //TODO: Add
+	private static final String ROOM_THREEQUATERS = "room_corner_ne"; 
 
 	public static void build(Cell cell, ServerLevel level, BlockPos pos) {
 		int wallCount = 0;

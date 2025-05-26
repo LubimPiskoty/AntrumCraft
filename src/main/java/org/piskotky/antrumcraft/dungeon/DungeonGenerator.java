@@ -36,6 +36,10 @@ public class DungeonGenerator {
 		}
 	}
 
+	public BlockPos getSpawnPos(){
+		return floors[0].getStartRoomPos().multiply(16);
+	}
+
 	// Data structure to create and manage floors
 	public class Floor {
 		// Floor consist of grid of cells
